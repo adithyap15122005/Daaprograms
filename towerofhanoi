@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <time.h>
+
+long long moves;
+
+void towerOfHanoi(int n, char source, char aux, char dest)
+{
+    if(n == 1)
+    {
+        moves++;
+        return;
+    }
+
+    towerOfHanoi(n - 1, source, dest, aux);
+
+    moves++;
+
+    towerOfHanoi(n - 1, aux, source, dest);
+}
+
+int main()
+{
+    printf("\nTower of Hanoi Analysis\n\n");
+    printf("-------------------------------------\n");
+    printf("Discs\tMoves\t\tTime(sec)\n");
+    printf("-------------------------------------\n");
+
+    for(int n = 5; n <= 32; n++)
+    {
+        moves = 0;
+
+        clock_t start = clock();
+
+        towerOfHanoi(n, 'A', 'B', 'C');
+
+        clock_t end = clock();
+
+        double time_taken =
+            (double)(end - start) / CLOCKS_PER_SEC;
+
+        printf("%d\t%lld\t\t%.6f\n",
+               n, moves, time_taken);
+    }
+
+    return 0;
+}
