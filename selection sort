@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void selectionSort(int a[], int n)
+{
+    int i, j, min, temp;
+
+    for(i = 0; i < n - 1; i++)
+    {
+        min = i;
+
+        for(j = i + 1; j < n; j++)
+        {
+            if(a[j] < a[min])
+                min = j;
+        }
+
+        temp = a[i];
+        a[i] = a[min];
+        a[min] = temp;
+    }
+}
+
+int main()
+{
+    printf("\nSelection Sort Analysis\n\n");
+    printf("----------------------------------------------------------\n");
+    printf("Size\tAscending\tDescending\tRandom\n");
+    printf("----------------------------------------------------------\n");
+
+    for(int n = 1000; n <= 10000; n += 1000)
+    {
+        int asc[n], desc[n], randArr[n];
+
+        for(int i = 0; i < n; i++)
+        {
+            asc[i] = i;
+            desc[i] = n - i;
+            randArr[i] = rand() % 10000;
+        }
+
+        clock_t start, end;
+
+        start = clock();
+        selectionSort(asc, n);
+        end = clock();
+        double ascTime = (double)(end - start) / CLOCKS_PER_SEC;
+
+        start = clock();
+        selectionSort(desc, n);
+        end = clock();
+        double descTime = (double)(end - start) / CLOCKS_PER_SEC;
+
+        start = clock();
+        selectionSort(randArr, n);
+        end = clock();
+        double randTime = (double)(end - start) / CLOCKS_PER_SEC;
+
+        printf("%d\t%.6f\t%.6f\t%.6f\n",
+               n, ascTime, descTime, randTime);
+    }
+
+    return 0;
+}
