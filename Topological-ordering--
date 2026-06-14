@@ -6,9 +6,10 @@ void topologicalSort(int n, int adj[20][20])
     int indegree[20] = {0};
     int visited[20] = {0};
     int topo[20];
+    int history[20];
     int k = 0;
 
-    // Calculate indegree
+    // Calculate initial indegrees
     for(int i = 0; i < n; i++)
     {
         for(int j = 0; j < n; j++)
@@ -18,22 +19,7 @@ void topologicalSort(int n, int adj[20][20])
         }
     }
 
-    // Display indegree in triangular format
-    printf("\nIndegree of given nodes\n\n");
-
-    for(int i = 0; i < n; i++)
-    {
-        printf("%c = ", 'A' + i);
-
-        for(int j = 0; j <= i; j++)
-        {
-            printf("%d ", indegree[j]);
-        }
-
-        printf("\n");
-    }
-
-    // Topological Sort
+    // Topological Sort and store indegree history
     while(k < n)
     {
         int found = 0;
@@ -42,7 +28,11 @@ void topologicalSort(int n, int adj[20][20])
         {
             if(indegree[i] == 0 && visited[i] == 0)
             {
-                topo[k++] = i;
+                topo[k] = i;
+
+                // Store indegree of selected vertex before deletion
+                history[k] = 0;
+
                 visited[i] = 1;
                 found = 1;
 
@@ -51,6 +41,17 @@ void topologicalSort(int n, int adj[20][20])
                     if(adj[i][j] == 1)
                         indegree[j]--;
                 }
+
+                // Count remaining zero indegree vertices
+                int cnt = 0;
+                for(int t = 0; t < n; t++)
+                {
+                    if(!visited[t] && indegree[t] == 0)
+                        cnt++;
+                }
+
+                history[k] = cnt;
+                k++;
             }
         }
 
@@ -61,7 +62,21 @@ void topologicalSort(int n, int adj[20][20])
         }
     }
 
-    printf("\nTopological Order is ");
+    printf("\nIndegree of given nodes\n\n");
+
+    for(int i = 0; i < n; i++)
+    {
+        printf("%c = ", 'A' + i);
+
+        for(int j = i; j >= 0; j--)
+        {
+            printf("%d ", history[j]);
+        }
+
+        printf("\n\n");
+    }
+
+    printf("Topological Order is ");
 
     for(int i = 0; i < n; i++)
     {
@@ -82,7 +97,7 @@ int main()
     printf("Enter number of vertices: ");
     scanf("%d", &n);
 
-    printf("Enter the Adjacency Matrix:\n");
+    printf("Enter Adjacency Matrix:\n");
 
     for(int i = 0; i < n; i++)
     {
@@ -101,6 +116,7 @@ int main()
     cpu_time = (double)(end - start) / CLOCKS_PER_SEC;
 
     printf("\nTime Taken = %f seconds\n", cpu_time);
+    printf("Time Complexity = O(n^2)\n");
 
     return 0;
 }
