@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
+int x[20];
+long long solution_count;
+
+// Print board configuration
+void printBoard(int n)
+{
+    printf("\nSolution %lld:\n", solution_count);
+
+    for (int row = 1; row <= n; row++)
+    {
+        for (int col = 1; col <= n; col++)
+        {
+            if (x[row] == col)
+                printf(" Q ");
+            else
+                printf(" . ");
+        }
+        printf("\n");
+    }
+}
+
+// Check if queen can be placed at row k, column i
+int place(int k, int i)
+{
+    for (int j = 1; j <= k - 1; j++)
+    {
+        if (x[j] == i || abs(x[j] - i) == abs(j - k))
+            return 0;
+    }
+    return 1;
+}
+
+// Backtracking function
+void nqueens(int k, int n)
+{
+    for (int i = 1; i <= n; i++)
+    {
+        if (place(k, i))
+        {
+            x[k] = i;
+
+            if (k == n)
+            {
+                solution_count++;
+
+                // Print board only for N = 4
+                if (n == 4)
+                {
+                    printBoard(n);
+                }
+            }
+            else
+            {
+                nqueens(k + 1, n);
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n;
+    clock_t start, end;
+    double cpu_time;
+
+    printf("N-Queens Results\n");
+    printf("--------------------------------------------------\n");
+
+    for (n = 1; n <= 10; n++)
+    {
+        solution_count = 0;
+
+        start = clock();
+
+        nqueens(1, n);
+
+        end = clock();
+
+        cpu_time = (double)(end - start) / CLOCKS_PER_SEC;
+
+        printf("\nN = %2d | Solutions = %10lld | Time = %.6f sec\n",
+               n, solution_count, cpu_time);
+    }
+
+    return 0;
+}
