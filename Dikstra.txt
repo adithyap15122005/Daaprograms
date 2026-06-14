@@ -2,32 +2,12 @@
 
 #define INF 99999
 
-int main()
+void dijkstra(int n, int cost[20][20], int source)
 {
-    int n, cost[20][20];
     int dist[20], visited[20];
-    int source;
-    int i, j, count, u, min;
+    int i, count, u, min;
 
-    printf("Enter number of vertices: ");
-    scanf("%d", &n);
-
-    printf("Enter cost adjacency matrix:\n");
-    for (i = 0; i < n; i++)
-    {
-        for (j = 0; j < n; j++)
-        {
-            scanf("%d", &cost[i][j]);
-
-            if (cost[i][j] == 0 && i != j)
-                cost[i][j] = INF;
-        }
-    }
-
-    printf("Enter source vertex (0 to %d): ", n - 1);
-    scanf("%d", &source);
-
-    // Initialization
+    // Initialize distance and visited arrays
     for (i = 0; i < n; i++)
     {
         dist[i] = cost[source][i];
@@ -37,12 +17,12 @@ int main()
     dist[source] = 0;
     visited[source] = 1;
 
-    // Dijkstra's Algorithm
+    // Main Dijkstra loop
     for (count = 1; count < n; count++)
     {
         min = INF;
 
-        // Find nearest unvisited vertex
+        // Find unvisited vertex with minimum distance
         for (i = 0; i < n; i++)
         {
             if (!visited[i] && dist[i] < min)
@@ -54,10 +34,11 @@ int main()
 
         visited[u] = 1;
 
-        // Update distances
+        // Update distances of adjacent vertices
         for (i = 0; i < n; i++)
         {
-            if (!visited[i] && dist[u] + cost[u][i] < dist[i])
+            if (!visited[i] &&
+                dist[u] + cost[u][i] < dist[i])
             {
                 dist[i] = dist[u] + cost[u][i];
             }
@@ -68,8 +49,36 @@ int main()
 
     for (i = 0; i < n; i++)
     {
-        printf("To %d = %d\n", i, dist[i]);
+        printf("Vertex %d -> %d\n", i, dist[i]);
     }
+}
+
+int main()
+{
+    int n, source;
+    int cost[20][20];
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter the cost adjacency matrix:\n");
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            scanf("%d", &cost[i][j]);
+
+            // Replace 0 by INF except diagonal
+            if (i != j && cost[i][j] == 0)
+                cost[i][j] = INF;
+        }
+    }
+
+    printf("Enter source vertex: ");
+    scanf("%d", &source);
+
+    dijkstra(n, cost, source);
 
     return 0;
 }
