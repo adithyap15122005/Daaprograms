@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+#define NO_OF_CHARS 256
+
+void badCharHeuristic(char pattern[], int m, int badchar[])
+{
+    int i;
+
+    for (i = 0; i < NO_OF_CHARS; i++)
+        badchar[i] = -1;
+
+    for (i = 0; i < m; i++)
+        badchar[(int)pattern[i]] = i;
+}
+
+void boyerMoore(char text[], char pattern[])
+{
+    int n = strlen(text);
+    int m = strlen(pattern);
+
+    int badchar[NO_OF_CHARS];
+
+    badCharHeuristic(pattern, m, badchar);
+
+    int shift = 0;
+
+    while (shift <= n - m)
+    {
+        int j = m - 1;
+
+        while (j >= 0 && pattern[j] == text[shift + j])
+            j--;
+
+        if (j < 0)
+        {
+            printf("Pattern found at index %d\n", shift);
+            return;
+        }
+        else
+        {
+            int bcShift = j - badchar[(int)text[shift + j]];
+
+            if (bcShift < 1)
+                bcShift = 1;
+
+            shift += bcShift;
+        }
+    }
+
+    printf("Pattern not found\n");
+}
+
+int main()
+{
+    char text[1000];
+    char pattern[100];
+
+    clock_t start, end;
+    double cpu_time;
+
+    printf("Enter Text: ");
+    fgets(text, sizeof(text), stdin);
+
+    printf("Enter Pattern: ");
+    fgets(pattern, sizeof(pattern), stdin);
+
+    text[strcspn(text, "\n")] = '\0';
+    pattern[strcspn(pattern, "\n")] = '\0';
+
+    start = clock();
+
+    boyerMoore(text, pattern);
+
+    end = clock();
+
+    cpu_time = (double)(end - start) / CLOCKS_PER_SEC;
+
+    printf("Execution Time = %f seconds\n", cpu_time);
+
+    return 0;
+}
