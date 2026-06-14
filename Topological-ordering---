@@ -69,7 +69,7 @@ void topologicalSort(int n, int adj[20][20])
     {
         printf("%c = ", 'A' + col);
 
-        for(int row = 0; row <= col; row++)
+        for(int row = 0; row <n; row++)
         {
             printf("%d ", snapshot[row][col]);
         }
