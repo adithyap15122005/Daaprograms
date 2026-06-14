@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <time.h>
+
+void topologicalSort(int n, int adj[20][20])
+{
+    int indegree[20] = {0};
+    int visited[20] = {0};
+    int topo[20];
+    int k = 0;
+
+    // Calculate indegree
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            if(adj[i][j] == 1)
+                indegree[j]++;
+        }
+    }
+
+    // Display indegree in triangular format
+    printf("\nIndegree of given nodes\n\n");
+
+    for(int i = 0; i < n; i++)
+    {
+        printf("%c = ", 'A' + i);
+
+        for(int j = 0; j <= i; j++)
+        {
+            printf("%d ", indegree[j]);
+        }
+
+        printf("\n");
+    }
+
+    // Topological Sort
+    while(k < n)
+    {
+        int found = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(indegree[i] == 0 && visited[i] == 0)
+            {
+                topo[k++] = i;
+                visited[i] = 1;
+                found = 1;
+
+                for(int j = 0; j < n; j++)
+                {
+                    if(adj[i][j] == 1)
+                        indegree[j]--;
+                }
+            }
+        }
+
+        if(!found)
+        {
+            printf("\nGraph contains a cycle\n");
+            return;
+        }
+    }
+
+    printf("\nTopological Order is ");
+
+    for(int i = 0; i < n; i++)
+    {
+        printf("%c ", 'A' + topo[i]);
+    }
+
+    printf("\n");
+}
+
+int main()
+{
+    int n;
+    int adj[20][20];
+
+    clock_t start, end;
+    double cpu_time;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter the Adjacency Matrix:\n");
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            scanf("%d", &adj[i][j]);
+        }
+    }
+
+    start = clock();
+
+    topologicalSort(n, adj);
+
+    end = clock();
+
+    cpu_time = (double)(end - start) / CLOCKS_PER_SEC;
+
+    printf("\nTime Taken = %f seconds\n", cpu_time);
+
+    return 0;
+}
