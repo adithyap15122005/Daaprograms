@@ -6,10 +6,10 @@ void topologicalSort(int n, int adj[20][20])
     int indegree[20] = {0};
     int visited[20] = {0};
     int topo[20];
-    int history[20];
-    int k = 0;
+    int snapshot[20][20];
+    int step = 0;
 
-    // Calculate initial indegrees
+    // Calculate initial indegree
     for(int i = 0; i < n; i++)
     {
         for(int j = 0; j < n; j++)
@@ -19,7 +19,13 @@ void topologicalSort(int n, int adj[20][20])
         }
     }
 
-    // Topological Sort and store indegree history
+    // Store initial indegree
+    for(int i = 0; i < n; i++)
+        snapshot[0][i] = indegree[i];
+
+    int k = 0;
+
+    // Topological Sort
     while(k < n)
     {
         int found = 0;
@@ -28,30 +34,24 @@ void topologicalSort(int n, int adj[20][20])
         {
             if(indegree[i] == 0 && visited[i] == 0)
             {
-                topo[k] = i;
-
-                // Store indegree of selected vertex before deletion
-                history[k] = 0;
-
+                topo[k++] = i;
                 visited[i] = 1;
                 found = 1;
 
+                // Delete outgoing edges
                 for(int j = 0; j < n; j++)
                 {
                     if(adj[i][j] == 1)
                         indegree[j]--;
                 }
 
-                // Count remaining zero indegree vertices
-                int cnt = 0;
-                for(int t = 0; t < n; t++)
-                {
-                    if(!visited[t] && indegree[t] == 0)
-                        cnt++;
-                }
+                step++;
 
-                history[k] = cnt;
-                k++;
+                // Store updated indegrees
+                for(int t = 0; t < n; t++)
+                    snapshot[step][t] = indegree[t];
+
+                break;
             }
         }
 
@@ -64,13 +64,14 @@ void topologicalSort(int n, int adj[20][20])
 
     printf("\nIndegree of given nodes\n\n");
 
-    for(int i = 0; i < n; i++)
+    // Print triangular indegree table
+    for(int col = 0; col < n; col++)
     {
-        printf("%c = ", 'A' + i);
+        printf("%c = ", 'A' + col);
 
-        for(int j = i; j >= 0; j--)
+        for(int row = 0; row <= col; row++)
         {
-            printf("%d ", history[j]);
+            printf("%d ", snapshot[row][col]);
         }
 
         printf("\n\n");
